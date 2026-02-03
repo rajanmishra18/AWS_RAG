@@ -1,8 +1,15 @@
 pip install --upgrade langchain langchain-community langchain-core langchain-text-splitters
 pip install fastapi uvicorn
+pip freeze > requirements.txt
 
 
 ---=====================
 git add .
 git commit -m ""
 git push origin main
+
+
+---=======================
+
+docker build -t rag-fastapi .
+docker run -p 8000:8000 rag-fastapi
