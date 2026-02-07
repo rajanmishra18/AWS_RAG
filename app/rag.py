@@ -1,4 +1,5 @@
 import os
+from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -45,10 +46,12 @@ def answer_question(query: str) -> str:
     docs = VECTORSTORE.similarity_search(query, k=2)
     context = "\n".join([doc.page_content for doc in docs])
 
-    llm = Ollama(
-    model="llama3",
-    base_url="http://host.docker.internal:11434"
+    llm = ChatOpenAI(
+        model="gpt-4o-mini",
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY")
     )
+
 
 
     prompt = f"""
