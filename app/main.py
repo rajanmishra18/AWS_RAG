@@ -15,7 +15,7 @@ class QuestionRequest(BaseModel):
 def health_check():
     return {'status':'RAG api is running.'}
 
-@app.post('/')
+@app.post('/ask')
 def ask_question(request:QuestionRequest):
     answer= answer_question(request.question)
     return {
