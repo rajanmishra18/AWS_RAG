@@ -26,18 +26,19 @@ jobs:
             id: login-ecr
             uses: aws-actions/configure-aws-credentials@v4
 
-          - name: Build and Push
+          - name: Build, tag, and push image to Amazon ECR
             id: build-image
             env:
                 ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
                 ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
                 IMAGE_TAG: ${{github.sha}}
-            run:
+            run: |
                 docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                 docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
                 echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+                
           - name: Update ECS Service
-            run: 
+            run:  |
                 aws ecs update-service \
                   --cluster ${{secrets.ECS_CLUSTER}} \
                   --service ${{secrets.ECS_SERVICE}} \
