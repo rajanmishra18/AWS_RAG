@@ -59,7 +59,7 @@ Context: {state['retrieved_context']}
     except:
         score=5
         
-    critique_text= lines[1] if len(lines)>1 else raw
+    critique= lines[1] if len(lines)>1 else raw
 
     return {
         "critique": critique,

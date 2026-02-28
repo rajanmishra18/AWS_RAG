@@ -1,3 +1,4 @@
+import os
 from litellm import completion
 from typing import List,Dict,Any
 
@@ -14,7 +15,7 @@ def fast_llm(
         max_tokens=max_tokens,
         **kwargs
     )
-    return response.choices[0].messages.content.strip()
+    return response.choices[0].message.content.strip()
 
 def strong_llm(
     messages:List[Dict[str,str]],
@@ -22,12 +23,16 @@ def strong_llm(
     max_tokens:int = 2048,
     **kwargs:Any
 ) -> str:
+    if os.getenv("ANTHROPIC_API_KEY"):
+        model_name = "anthropic/claude-sonnet-4-20250514"
+    else:
+        model_name = "openai/gpt-4o"
     response=completion(
-        model='anthropic/claude-3-5-sonnet-20241022',
+        model=model_name,
         messages=messages,
         temperature=temperature,
         max_tokens=max_tokens,
         **kwargs
     )
-    return response.choices[0].messages.content.strip()
+    return response.choices[0].message.content.strip()
 
