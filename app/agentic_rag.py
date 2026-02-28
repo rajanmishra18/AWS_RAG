@@ -11,7 +11,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from app.rag import retrieve, rerank_request
 
 #import multi model support
-from llm_utils import fast_llm,strong_llm
+from app.llm_utils import fast_llm,strong_llm
 
 llm = ChatOpenAI(model="gpt-4o-mini")
 

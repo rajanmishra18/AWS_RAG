@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from uuid import uuid4
 from pydantic import BaseModel
-from app.rag import answer_question
+#from app.rag import answer_question
 from app.agentic_rag import agent
 from langchain_core.messages import HumanMessage
 
@@ -19,13 +19,13 @@ class QuestionRequest(BaseModel):
 def health_check():
     return {'status':'RAG api is running.'}
 
-@app.post('/ask')
-def ask_question(request:QuestionRequest):
-    answer= answer_question(request.question)
-    return {
-        'question': request.question,
-        'answer':answer
-    }
+# @app.post('/ask')
+# def ask_question(request:QuestionRequest):
+#     answer= answer_question(request.question)
+#     return {
+#         'question': request.question,
+#         'answer':answer
+#     }
 
 @app.post("/agent_query")
 async def agent_query(request: QuestionRequest):
