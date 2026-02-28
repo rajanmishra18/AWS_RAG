@@ -51,7 +51,7 @@ Query: {state['query']}
 Context: {state['retrieved_context']}
 """
 
-    raw=fast_llm([{"role": "user", "content":prompt}])
+    raw=fast_llm([{"role": "user", "content":critique_prompt}])
 
     lines = raw.strip().split("\n", 1)
     try:
