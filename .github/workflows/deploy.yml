@@ -22,9 +22,9 @@ jobs:
               role-to-assume: arn:aws:iam::989513605501:role/GitHub
               aws-region: ${{secrets.AWS_REGION}}
 
-          - name: Login to ECR
+          - name: Login to AMAZON ECR
             id: login-ecr
-            uses: aws-actions/configure-aws-credentials@v4
+            uses: aws-actions/amazon-ecr-login@v2
 
           - name: Build, tag, and push image to Amazon ECR
             id: build-image
@@ -33,10 +33,11 @@ jobs:
                 ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
                 IMAGE_TAG: ${{github.sha}}
             run: |
+                echo "Registry is: $ECR_REGISTRY"
                 docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                 docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
                 echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-                
+
           - name: Update ECS Service
             run:  |
                 aws ecs update-service \
