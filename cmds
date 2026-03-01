@@ -1,1 +1,23 @@
 pip install --upgrade langchain langchain-community langchain-core langchain-text-splitters
+pip install fastapi uvicorn
+pip freeze > requirements.txt
+
+---=====================
+git add .
+git commit -m ""
+git push origin main
+
+---=======================
+
+docker build -t rag-fastapi .
+docker run -p 8000:8000 rag-fastapi
+
+---=======================
+
+cd AWS_RAG
+git pull
+docker build -t rag-fastapi .
+docker stop $(docker ps -q)
+docker rm $(docker ps -q)
+docker run -d --restart unless-stopped -p 8000:8000 --env-file .env rag-fastapi
+

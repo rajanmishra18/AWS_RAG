@@ -1,9 +1,11 @@
 from fastapi import FastAPI
+
 from uuid import uuid4
 from pydantic import BaseModel
 from app.rag import answer_question
 from app.agentic_rag import agent
 from langchain_core.messages import HumanMessage
+
 
 app = FastAPI(
     title='AWS RAG API',
@@ -13,7 +15,9 @@ app = FastAPI(
 
 class QuestionRequest(BaseModel):
     question:str
+
     thread_Id:str | None=None # Optional parameter, Client may send
+
 
 @app.get('/')
 def health_check():
@@ -52,4 +56,5 @@ async def agent_query(request: QuestionRequest):
         "answer": result.get("final_answer"),
         "critique": result.get("critique"),
         "thread_id": thread_Id
+
     }

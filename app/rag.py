@@ -43,6 +43,7 @@ def get_vectorstore():
 # Build / load vector DB once at startup
 VECTORSTORE = get_vectorstore()
 
+
 RANKER=Ranker(model_name='ms-marco-MiniLM-L-12-v2')
 
 def answer_question(query: str) -> str:
@@ -61,21 +62,20 @@ def answer_question(query: str) -> str:
     top_chunks=[p['text'] for p in reranked[:3]]
 
     context = '\n\n'.join(top_chunks)
-    llm = ChatOpenAI(
-        model="gpt-4o-mini",
-        temperature=0,
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
+
 
     prompt = f"""
 Answer the question using ONLY the context below.
 
 Context:
+
 {context}
+
 
 Question:
 {query}
 """
+
 
     response = llm.invoke(prompt)
     return response.content
@@ -96,3 +96,4 @@ def rerank_request(query: str, chunks: list, top_n: int = 3):
 
     results = reranked["results"] if isinstance(reranked, dict) else reranked
     return [item["text"] for item in results[:top_n]]
+
