@@ -23,7 +23,9 @@ Jinja2==3.1.6
 joblib==1.5.3
 jsonpatch==1.33
 jsonpointer==3.0.0
+langgraph
 langchain==1.2.7
+langchain_openai
 langchain-classic==1.0.1
 langchain-community==0.4.1
 langchain-core==1.2.7
@@ -68,3 +70,5 @@ yarl==1.22.0
 zstandard==0.25.0
 openai
 flashrank
+litellm
+

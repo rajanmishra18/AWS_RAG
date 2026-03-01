@@ -43,33 +43,57 @@ def get_vectorstore():
 # Build / load vector DB once at startup
 VECTORSTORE = get_vectorstore()
 
+
+RANKER=Ranker(model_name='ms-marco-MiniLM-L-12-v2')
+
 def answer_question(query: str) -> str:
     docs = VECTORSTORE.similarity_search(query, k=5)
-    context = "\n".join([doc.page_content for doc in top_chunks])
 
-    ranker=Ranker(model_name='ms-marco-MiniLM-L-12-v2')
+    passage=[doc.page_content for doc in docs]
+
     rerank_request=RerankRequest(
         query=query,
-        passages=[{'text':chunk} for chunk in context]
+        passages=[{'text':text} for text in passage]
     )
 
-    reranked=ranker.rerank(rerank_request)
-    top_chunks=[p['text'] for p in reranked[:5]]
-    modified_context = '\n\n'.join(top_chunks)
-    llm = ChatOpenAI(
-        model="gpt-4o-mini",
-        temperature=0,
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
+    reranked=RANKER.rerank(rerank_request)
+    results = reranked["results"] if isinstance(reranked, dict) else reranked
+
+    top_chunks=[p['text'] for p in reranked[:3]]
+
+    context = '\n\n'.join(top_chunks)
+
 
     prompt = f"""
 Answer the question using ONLY the context below.
 
 Context:
-{modified_context}
+
+{context}
+
 
 Question:
 {query}
 """
 
-    return llm.invoke(prompt)
+
+    response = llm.invoke(prompt)
+    return response.content
+
+def retrieve(query: str, top_k: int = 5):
+    docs = VECTORSTORE.similarity_search(query, k=top_k)
+    return [doc.page_content for doc in docs]
+
+
+def rerank_request(query: str, chunks: list, top_n: int = 3):
+    ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2")
+    rerank_request = RerankRequest(
+        query=query,
+        passages=[{"text": chunk} for chunk in chunks]
+    )
+
+    reranked = ranker.rerank(rerank_request)
+
+    results = reranked["results"] if isinstance(reranked, dict) else reranked
+    return [item["text"] for item in results[:top_n]]
+
